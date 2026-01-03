@@ -57,9 +57,11 @@
             <a href="#" class="flex items-center gap-3 text-gray-700 font-bold hover:text-primary">
                 💰 <span>Laporan Keuangan</span>
             </a>
-            <a href="#" class="flex items-center gap-3 text-gray-700 font-bold hover:text-primary">
+            @if(Auth::user()->role && Auth::user()->role->value === 'admin')
+            <a href="{{ route('users.index') }}" class="flex items-center gap-3 text-gray-700 font-bold hover:text-primary">
                 👥 <span>Manajemen User</span>
             </a>
+            @endif
             <form method="POST" action="/logout" class="flex flex-col justify-end">
                 @csrf
                 <button type="submit" class="flex items-center gap-3 font-bold text-gray-700 hover:text-red-600">

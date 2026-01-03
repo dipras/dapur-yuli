@@ -1,0 +1,70 @@
+@extends('layouts.main')
+
+@section('content')
+<div class="bg-slate-100 relative" x-data="{ open: false }" `>
+
+    <!-- Header -->
+    <header class="bg-primary text-white flex items-center justify-between px-4 py-4">
+        <button class="text-2xl" @click="open = true">☰</button>
+        <h1 class="font-bold tracking-wide">@yield('header_title', 'DAPUR YULI')</h1>
+        <div class="w-6"></div>
+    </header>
+
+    @yield('subcontent')
+
+
+    <aside
+        x-show="open == true"
+        x-transition:enter="transition transform duration-300"
+        x-transition:enter-start="-translate-x-full"
+        x-transition:enter-end="translate-x-0"
+        x-transition:leave="transition transform duration-300"
+        x-transition:leave-start="translate-x-0"
+        x-transition:leave-end="-translate-x-full"
+        class="absolute top-0 left-0 w-72 bg-white rounded-r-3xl shadow-lg flex flex-col h-full"
+        style="z-index: 5;"
+        >
+
+        <!-- User Card -->
+        <div class="p-6">
+            <div class="flex items-center gap-3 bg-white shadow rounded-2xl p-4">
+                <div>
+                    <p class="font-semibold text-sm">Ashera Putri Nandana</p>
+                    <p class="text-xs text-gray-500">Kasir</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu -->
+        <nav class="flex-1 flex flex-col px-6 gap-6 pb-24">
+            <a href="#" class="flex items-center gap-3 text-gray-700 font-bold hover:text-primary">
+                📋 <span>Checkout</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 text-gray-700 font-bold hover:text-primary">
+                🧾 <span>Histori Transaksi</span>
+            </a>
+            <a href="/product" class="flex items-center gap-3 text-gray-700 font-bold hover:text-primary">
+                🍽️ <span>Atur stok makanan</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 text-gray-700 font-bold hover:text-primary">
+                💰 <span>Laporan Keuangan</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 text-gray-700 font-bold hover:text-primary">
+                👥 <span>Manajemen User</span>
+            </a>
+            <form method="POST" action="/logout" class="flex flex-col justify-end">
+                @csrf
+                <button type="submit" class="flex items-center gap-3 font-bold text-gray-700 hover:text-red-600">
+                    🚪 <span>Logout</span>
+                </button>
+            </form>
+        </nav>
+
+        <!-- Logout -->
+
+    </aside>
+    <div x-show="open == true" @click="open = false" class="absolute w-full h-full top-0 left-0 z-1" style="background: rgba(0, 0, 0, 0.3)"></div>
+
+</div>
+
+@endsection

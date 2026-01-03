@@ -9,18 +9,27 @@ class ProductController extends Controller
 {
     public function index(Request $request) {
         $type = $request->query('type');
+        $search = $request->query('search');
+        
+        $query = Product::query();
+        
+        // Filter by type
+        if ($type && in_array($type, ['food', 'drink'])) {
+            $query->where('category', $type);
+        }
+        
+        // Filter by search
+        if ($search) {
+            $query->where('product_name', 'like', '%' . $search . '%');
+        }
+        
+        $products = $query->get();
         
         $allTotal = Product::count();
         $foodTotal = Product::where('category', 'food')->count();
         $drinkTotal = Product::where('category', 'drink')->count();
         
-        if ($type && in_array($type, ['food', 'drink'])) {
-            $products = Product::where('category', $type)->get();
-        } else {
-            $products = Product::all();
-        }
-        
-        return view('product.index', compact('products', 'allTotal', 'foodTotal', 'drinkTotal', 'type'));
+        return view('product.index', compact('products', 'allTotal', 'foodTotal', 'drinkTotal', 'type', 'search'));
     }
     
     public function create() {

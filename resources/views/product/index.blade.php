@@ -18,7 +18,7 @@
     <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl">
         <ul class="list-disc list-inside text-sm">
             @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
+            <li>{{ $error }}</li>
             @endforeach
         </ul>
     </div>
@@ -27,21 +27,40 @@
 
 <!-- Search -->
 <div class="px-4 mt-4">
-    <input
-        type="text"
-        placeholder="Cari Barang"
-        class="w-full rounded-xl px-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <form action="{{ route('product.index') }}" method="GET">
+        @if(request('type'))
+        <input type="hidden" name="type" value="{{ request('type') }}">
+        @endif
+        <div class="relative">
+            <input
+                type="text"
+                name="search"
+                value="{{ request('search') }}"
+                placeholder="Cari Barang"
+                class="w-full rounded-xl px-4 py-3 pr-10 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            @if(request('search'))
+            <a href="{{ route('product.index', array_filter(['type' => request('type')])) }}"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                <x-heroicon-o-x-mark class="w-5 h-5" />
+            </a>
+            @else
+            <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                <x-heroicon-o-magnifying-glass class="w-5 h-5" />
+            </button>
+            @endif
+        </div>
+    </form>
 </div>
 
 <!-- Filter -->
 <div class="flex items-center gap-2 px-4 mt-4">
-    <a href="{{ route('product.index') }}" class="{{ !request('type') ? 'bg-blue-500 text-white' : 'bg-white' }} px-4 py-2 rounded-full text-sm font-medium shadow">
+    <a href="{{ route('product.index', array_filter(['search' => request('search')])) }}" class="{{ !request('type') ? 'bg-blue-500 text-white' : 'bg-white' }} px-4 py-2 rounded-full text-sm font-medium shadow">
         Semua ({{ $allTotal }})
     </a>
-    <a href="{{ route('product.index', ['type' => 'food']) }}" class="{{ request('type') == 'food' ? 'bg-blue-500 text-white' : 'bg-white' }} px-4 py-2 rounded-full text-sm shadow">
+    <a href="{{ route('product.index', array_filter(['type' => 'food', 'search' => request('search')])) }}" class="{{ request('type') == 'food' ? 'bg-blue-500 text-white' : 'bg-white' }} px-4 py-2 rounded-full text-sm shadow">
         Makanan ({{ $foodTotal }})
     </a>
-    <a href="{{ route('product.index', ['type' => 'drink']) }}" class="{{ request('type') == 'drink' ? 'bg-blue-500 text-white' : 'bg-white' }} px-4 py-2 rounded-full text-sm shadow">
+    <a href="{{ route('product.index', array_filter(['type' => 'drink', 'search' => request('search')])) }}" class="{{ request('type') == 'drink' ? 'bg-blue-500 text-white' : 'bg-white' }} px-4 py-2 rounded-full text-sm shadow">
         Minuman ({{ $drinkTotal }})
     </a>
 </div>
@@ -76,8 +95,8 @@
     </div>
     @endforelse
 
-    <a href="{{ route('product.create') }}" class="bg-primary w-12 h-12 text-2xl text-white rounded-full shadow flex items-center justify-center sticky bottom-4 cursor-pointer hover:bg-blue-600">
-        <x-heroicon-o-plus class="w-6 h-6" />
-    </a>
 </div>
+<a href="{{ route('product.create') }}" class="bg-primary ml-2 w-12 h-12 text-2xl text-white rounded-full shadow flex items-center justify-center sticky bottom-4 cursor-pointer hover:bg-blue-600 left-0">
+    <x-heroicon-o-plus class="w-6 h-6" />
+</a>
 @endsection

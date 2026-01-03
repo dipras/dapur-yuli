@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section('content')
-<div class="bg-slate-100 relative" x-data="{ open: false }" `>
+<div class="bg-slate-100 relative min-h-screen" x-data="{ open: false }" `>
 
     <!-- Header -->
     <header class="bg-primary text-white flex items-center justify-between px-4 py-4">
@@ -9,7 +9,6 @@
         <h1 class="font-bold tracking-wide">@yield('header_title', 'DAPUR YULI')</h1>
         <div class="w-6"></div>
     </header>
-
     @yield('subcontent')
 
 
@@ -27,12 +26,21 @@
 
         <!-- User Card -->
         <div class="p-6">
-            <div class="flex items-center gap-3 bg-white shadow rounded-2xl p-4">
-                <div>
-                    <p class="font-semibold text-sm">Ashera Putri Nandana</p>
-                    <p class="text-xs text-gray-500">Kasir</p>
+            <a href="{{ route('profile.show') }}" class="flex items-center gap-3 bg-white shadow rounded-2xl p-4 hover:bg-gray-50 transition">
+                <div class="w-12 h-12 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+                    @if(Auth::user()->avatar)
+                        <img src="{{ Auth::user()->avatar }}" alt="{{ Auth::user()->name }}" class="w-full h-full object-cover">
+                    @else
+                        <div class="w-full h-full flex items-center justify-center text-gray-400">
+                            <x-heroicon-o-user class="w-6 h-6" />
+                        </div>
+                    @endif
                 </div>
-            </div>
+                <div>
+                    <p class="font-semibold text-sm">{{ Auth::user()->full_name ?? Auth::user()->name }}</p>
+                    <p class="text-xs text-gray-500">{{ Auth::user()->role ? ucfirst(Auth::user()->role->value) : 'Kasir' }}</p>
+                </div>
+            </a>
         </div>
 
         <!-- Menu -->

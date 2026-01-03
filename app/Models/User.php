@@ -9,7 +9,7 @@ use Illuminate\Notifications\Notifiable;
 
 enum UserRole: string {
     case ADMIN = 'admin';
-    case USER  = 'user';
+    case CASHIER = 'cashier';
 }
 
 class User extends Authenticatable
@@ -24,8 +24,16 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
+        'full_name',
         'email',
         'password',
+        'role',
+        'gender',
+        'birth_date',
+        'phone',
+        'address',
+        'avatar',
     ];
 
     /**

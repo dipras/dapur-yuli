@@ -37,7 +37,7 @@
                     @endif
                 </div>
                 <div>
-                    <p class="font-semibold text-sm">{{ Auth::user()->full_name ?? Auth::user()->name }}</p>
+                    <p class="font-semibold text-sm">{{ Auth::user()->name }}</p>
                     <p class="text-xs text-gray-500">{{ Auth::user()->role ? ucfirst(Auth::user()->role->value) : 'Kasir' }}</p>
                 </div>
             </a>

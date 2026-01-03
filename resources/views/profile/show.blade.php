@@ -20,7 +20,7 @@
             <!-- Avatar -->
             <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg mb-4">
                 @if($user->avatar)
-                    <img src="{{ $user->avatar }}" alt="{{ $user->full_name ?? $user->name }}" class="w-full h-full object-cover">
+                    <img src="{{ $user->avatar }}" alt="{{ $user->name }}" class="w-full h-full object-cover">
                 @else
                     <div class="w-full h-full bg-gray-200 flex items-center justify-center">
                         <x-heroicon-o-user class="w-16 h-16 text-gray-400" />
@@ -29,7 +29,7 @@
             </div>
             
             <!-- User Info -->
-            <h2 class="font-bold text-xl text-white mb-1">{{ $user->full_name ?? $user->name }}</h2>
+            <h2 class="font-bold text-xl text-white mb-1">{{ $user->name }}</h2>
             <p class="text-white text-sm opacity-90">{{ $user->email }}</p>
             
             <!-- Edit Button -->
@@ -48,7 +48,7 @@
             <!-- Nama Lengkap -->
             <div class="flex justify-between items-center py-3 border-b border-gray-100">
                 <span class="text-gray-500 text-sm">Nama Lengkap</span>
-                <span class="font-semibold text-right">{{ $user->full_name ?? '-' }}</span>
+                <span class="font-semibold text-right">{{ $user->name ?? '-' }}</span>
             </div>
             
             <!-- Username -->

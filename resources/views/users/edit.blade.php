@@ -39,11 +39,11 @@
     <!-- Nama Lengkap -->
     <div>
         <label class="block text-sm font-bold text-gray-700 mb-2">Nama Lengkap<span class="text-red-500">*</span></label>
-        <input type="text" name="full_name" required 
-               value="{{ old('full_name', $user->full_name) }}"
+        <input type="text" name="name" required 
+               value="{{ old('name', $user->name) }}"
                placeholder="Nama lengkap"
-               class="w-full px-4 py-3 bg-white rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 @error('full_name') ring-2 ring-red-500 @enderror">
-        @error('full_name')
+               class="w-full px-4 py-3 bg-white rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 @error('name') ring-2 ring-red-500 @enderror">
+        @error('name')
         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
         @enderror
     </div>
@@ -68,18 +68,6 @@
                placeholder="Email"
                class="w-full px-4 py-3 bg-white rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 @error('email') ring-2 ring-red-500 @enderror">
         @error('email')
-        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-        @enderror
-    </div>
-    
-    <!-- Role -->
-    <div>
-        <label class="block text-sm font-bold text-gray-700 mb-2">Role<span class="text-red-500">*</span></label>
-        <select name="role" required class="w-full px-4 py-3 bg-white rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none @error('role') ring-2 ring-red-500 @enderror">
-            <option value="cashier" {{ old('role', $user->role?->value) == 'cashier' ? 'selected' : '' }}>Cashier</option>
-            <option value="admin" {{ old('role', $user->role?->value) == 'admin' ? 'selected' : '' }}>Admin</option>
-        </select>
-        @error('role')
         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
         @enderror
     </div>

@@ -53,6 +53,12 @@
             <input type="hidden" name="transaction_number" value="{{ $transactionNumber }}">
             <input type="hidden" name="payment_method" value="qris">
             <input type="hidden" name="total" value="{{ $total }}">
+            @if(isset($items))
+                @foreach($items as $index => $item)
+                <input type="hidden" name="items[{{ $index }}][product_id]" value="{{ $item['product_id'] }}">
+                <input type="hidden" name="items[{{ $index }}][quantity]" value="{{ $item['quantity'] }}">
+                @endforeach
+            @endif
             
             <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-xl shadow font-semibold flex items-center justify-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

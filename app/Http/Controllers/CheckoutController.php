@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CheckoutController extends Controller
 {
@@ -70,11 +72,20 @@ class CheckoutController extends Controller
         
         // If payment method is QRIS, show QR code page
         if ($paymentMethod === 'qris') {
-            return view('checkout/qris', compact('transactionNumber', 'total'));
+            return view('checkout/qris', compact('transactionNumber', 'total', 'items'));
         }
         
-        // If payment method is cash, go directly to success page
+        // If payment method is cash, save transaction and go to success page
         if ($paymentMethod === 'cash') {
+            // Save transaction
+            Transaction::create([
+                'transaction_number' => $transactionNumber,
+                'payment_method' => $paymentMethod,
+                'total' => $total,
+                'items' => $items,
+                'user_id' => Auth::id()
+            ]);
+            
             $date = date('d/m/Y');
             $time = date('H.i') . ' WIB';
             
@@ -94,6 +105,19 @@ class CheckoutController extends Controller
         $transactionNumber = $request->input('transaction_number');
         $paymentMethod = $request->input('payment_method');
         $total = $request->input('total');
+        $items = $request->input('items', []);
+        
+        // Save transaction if from QRIS payment
+        if ($paymentMethod === 'qris') {
+            Transaction::create([
+                'transaction_number' => $transactionNumber,
+                'payment_method' => $paymentMethod,
+                'total' => $total,
+                'items' => $items,
+                'user_id' => Auth::id()
+            ]);
+        }
+        
         $date = date('d/m/Y');
         $time = date('H.i') . ' WIB';
         

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +15,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout/summary', [CheckoutController::class, 'summary']);
     Route::post('/checkout/payment', [CheckoutController::class, 'processPayment']);
     Route::post('/checkout/success', [CheckoutController::class, 'success']);
+    
+    // Transaction routes
+    Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
+    Route::get('/transactions/{transaction}', [TransactionController::class, 'show'])->name('transactions.show');
     
     Route::resource('product', ProductController::class);
     

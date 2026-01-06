@@ -1,14 +1,20 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', [HomeController::class, 'index']);
+    Route::get('/', [CheckoutController::class, 'index']);
+    
+    // Checkout routes
+    Route::post('/checkout/summary', [CheckoutController::class, 'summary']);
+    Route::post('/checkout/payment', [CheckoutController::class, 'processPayment']);
+    Route::post('/checkout/success', [CheckoutController::class, 'success']);
+    
     Route::resource('product', ProductController::class);
     
     // Profile routes - untuk edit profil sendiri

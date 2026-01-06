@@ -1,7 +1,8 @@
 @extends('layouts.sidebarpage')
 
 @section('subcontent')
-<form method="GET" x-data="{ quantities: {}, get hasItems() { return Object.values(this.quantities).some(q => q > 0) } }">
+<form method="POST" action="/checkout/summary" x-data="{ quantities: {}, get hasItems() { return Object.values(this.quantities).some(q => q > 0) } }">
+    @csrf
     <!-- Category Tabs -->
     <div class="px-4 py-4 flex gap-3 overflow-x-auto">
         <a href="/" class="{{ $type == 'all' ? 'bg-primary text-white' : 'bg-white' }} px-4 py-2 rounded-full text-xs shadow">
@@ -29,7 +30,7 @@
             </div>
             <div class="flex items-center gap-2" x-init="quantities[{{ $product->id }}] = 0">
                 <button type="button" @click="quantities[{{ $product->id }}] = Math.max(0, quantities[{{ $product->id }}] - 1)" class="w-7 h-7 rounded-full border border-red-500 text-red-500 flex items-center justify-center hover:bg-red-50">−</button>
-                <input type="number" name="{{ $product->product_name }}" x-model="quantities[{{ $product->id }}]" class="w-10 text-sm font-semibold text-center border-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" readonly>
+                <input type="number" name="products[{{ $product->id }}]" x-model="quantities[{{ $product->id }}]" class="w-10 text-sm font-semibold text-center border-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" readonly>
                 <button type="button" @click="quantities[{{ $product->id }}]++" class="w-7 h-7 rounded-full border border-green-500 text-green-500 flex items-center justify-center hover:bg-green-50">+</button>
             </div>
         </div>

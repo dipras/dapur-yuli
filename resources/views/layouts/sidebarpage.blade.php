@@ -21,7 +21,7 @@
         x-transition:leave-start="translate-x-0"
         x-transition:leave-end="-translate-x-full"
         class="absolute top-0 left-0 w-72 bg-white rounded-r-3xl shadow-lg flex flex-col h-full"
-        style="z-index: 5;"
+        style="z-index: 100;"
         >
 
         <!-- User Card -->

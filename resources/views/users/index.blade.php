@@ -28,6 +28,14 @@
 
 <!-- List -->
 <div class="px-4 mt-4 space-y-3 pb-20 relative">
+    @if(isset($noCashiers) && $noCashiers)
+    <!-- Alternative flow: Belum ada data kasir -->
+    <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded-xl text-center mb-4">
+        <p class="font-medium">Belum Ada Data Kasir</p>
+        <p class="text-sm">Silakan tambahkan kasir baru dengan menekan tombol + di bawah</p>
+    </div>
+    @endif
+    
     @forelse($users as $user)
     <!-- User Item -->
     <div class="bg-white rounded-xl shadow flex items-center p-3">

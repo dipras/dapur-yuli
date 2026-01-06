@@ -13,6 +13,12 @@ class UserController extends Controller
     // Profile methods untuk user edit profil sendiri
     public function profile() {
         $user = Auth::user();
+        
+        // Alternative flow: Data profil tidak tersedia
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Data profil tidak tersedia. Silakan login kembali.');
+        }
+        
         return view('profile.show', compact('user'));
     }
     
@@ -80,7 +86,15 @@ class UserController extends Controller
     // Management methods untuk admin
     public function index() {
         $users = User::orderBy('created_at', 'desc')->get();
-        return view('users.index', compact('users'));
+        
+        // Alternative flow: Data kasir tidak ditemukan
+        $cashiers = $users->filter(function($user) {
+            return $user->role && $user->role->value === 'cashier';
+        });
+        
+        $noCashiers = $cashiers->isEmpty();
+        
+        return view('users.index', compact('users', 'noCashiers'));
     }
     
     public function create() {

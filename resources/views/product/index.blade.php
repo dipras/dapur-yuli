@@ -67,6 +67,14 @@
 
 <!-- List -->
 <div class="px-4 mt-4 space-y-3">
+    @if(isset($notFound) && $notFound)
+    <!-- Alternative flow: Data tidak ditemukan saat search -->
+    <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded-xl text-center">
+        <p class="font-medium">Data Tidak Ditemukan</p>
+        <p class="text-sm">Tidak ada produk dengan kata kunci "{{ $search }}"</p>
+    </div>
+    @endif
+    
     @forelse($products as $product)
     <!-- Item -->
     <div class="bg-white rounded-xl shadow flex items-center p-3">

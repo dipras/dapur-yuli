@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CheckoutController extends Controller
 {
@@ -32,15 +33,22 @@ class CheckoutController extends Controller
         $items = [];
         $totalPrice = 0;
         $totalItems = 0;
+        $stockErrors = [];
         
         foreach ($products as $productId => $quantity) {
             if ($quantity > 0) {
                 $product = Product::find($productId);
                 if ($product) {
+                    // Alternative flow: Validasi stok tersedia
+                    if ($product->stock < $quantity) {
+                        $stockErrors[] = "Stok {$product->product_name} tidak mencukupi (tersedia: {$product->stock})";
+                        continue;
+                    }
+                    
                     $subtotal = $product->price * $quantity;
                     $items[] = [
                         'product_id' => $productId,
-                        'name' => $product->name,
+                        'name' => $product->product_name,
                         'quantity' => $quantity,
                         'price' => $product->price,
                         'subtotal' => $subtotal
@@ -49,6 +57,11 @@ class CheckoutController extends Controller
                     $totalItems += $quantity;
                 }
             }
+        }
+        
+        // Alternative flow: Stok tidak mencukupi
+        if (!empty($stockErrors)) {
+            return redirect('/')->withErrors($stockErrors)->withInput();
         }
         
         // Redirect back if no items
@@ -77,25 +90,48 @@ class CheckoutController extends Controller
         
         // If payment method is cash, save transaction and go to success page
         if ($paymentMethod === 'cash') {
-            // Save transaction
-            Transaction::create([
-                'transaction_number' => $transactionNumber,
-                'payment_method' => $paymentMethod,
-                'total' => $total,
-                'items' => $items,
-                'user_id' => Auth::id()
-            ]);
-            
-            $date = date('d/m/Y');
-            $time = date('H.i') . ' WIB';
-            
-            return view('checkout/success', [
-                'transactionNumber' => $transactionNumber,
-                'paymentMethod' => 'cash',
-                'total' => $total,
-                'date' => $date,
-                'time' => $time
-            ]);
+            // Alternative flow: Gunakan database transaction untuk mencegah kegagalan
+            DB::beginTransaction();
+            try {
+                // Validasi dan kurangi stok
+                foreach ($items as $item) {
+                    $product = Product::find($item['product_id']);
+                    if (!$product) {
+                        throw new \Exception("Produk tidak ditemukan");
+                    }
+                    if ($product->stock < $item['quantity']) {
+                        throw new \Exception("Stok {$product->product_name} tidak mencukupi");
+                    }
+                    $product->stock -= $item['quantity'];
+                    $product->save();
+                }
+                
+                // Save transaction
+                Transaction::create([
+                    'transaction_number' => $transactionNumber,
+                    'payment_method' => $paymentMethod,
+                    'total' => $total,
+                    'items' => $items,
+                    'user_id' => Auth::id()
+                ]);
+                
+                DB::commit();
+                
+                $date = date('d/m/Y');
+                $time = date('H.i') . ' WIB';
+                
+                return view('checkout/success', [
+                    'transactionNumber' => $transactionNumber,
+                    'paymentMethod' => 'cash',
+                    'total' => $total,
+                    'date' => $date,
+                    'time' => $time
+                ]);
+            } catch (\Exception $e) {
+                DB::rollBack();
+                // Alternative flow: Transaksi gagal
+                return redirect('/')->with('error', 'Transaksi Gagal: ' . $e->getMessage());
+            }
         }
         
         return redirect('/');
@@ -109,13 +145,35 @@ class CheckoutController extends Controller
         
         // Save transaction if from QRIS payment
         if ($paymentMethod === 'qris') {
-            Transaction::create([
-                'transaction_number' => $transactionNumber,
-                'payment_method' => $paymentMethod,
-                'total' => $total,
-                'items' => $items,
-                'user_id' => Auth::id()
-            ]);
+            DB::beginTransaction();
+            try {
+                // Validasi dan kurangi stok
+                foreach ($items as $item) {
+                    $product = Product::find($item['product_id']);
+                    if (!$product) {
+                        throw new \Exception("Produk tidak ditemukan");
+                    }
+                    if ($product->stock < $item['quantity']) {
+                        throw new \Exception("Stok {$product->product_name} tidak mencukupi");
+                    }
+                    $product->stock -= $item['quantity'];
+                    $product->save();
+                }
+                
+                Transaction::create([
+                    'transaction_number' => $transactionNumber,
+                    'payment_method' => $paymentMethod,
+                    'total' => $total,
+                    'items' => $items,
+                    'user_id' => Auth::id()
+                ]);
+                
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollBack();
+                // Alternative flow: Transaksi QRIS gagal
+                return redirect('/')->with('error', 'Transaksi Gagal: ' . $e->getMessage());
+            }
         }
         
         $date = date('d/m/Y');

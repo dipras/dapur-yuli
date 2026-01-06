@@ -29,7 +29,13 @@ class ProductController extends Controller
         $foodTotal = Product::where('category', 'food')->count();
         $drinkTotal = Product::where('category', 'drink')->count();
         
-        return view('product.index', compact('products', 'allTotal', 'foodTotal', 'drinkTotal', 'type', 'search'));
+        // Alternative flow: Data tidak ditemukan saat search
+        $notFound = false;
+        if ($search && $products->isEmpty()) {
+            $notFound = true;
+        }
+        
+        return view('product.index', compact('products', 'allTotal', 'foodTotal', 'drinkTotal', 'type', 'search', 'notFound'));
     }
     
     public function create() {

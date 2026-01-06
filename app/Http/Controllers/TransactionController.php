@@ -39,7 +39,10 @@ class TransactionController extends Controller
             })
             ->sum('total');
         
-        return view('transactions.index', compact('transactions', 'totalSum'));
+        // Alternative flow: Data transaksi tidak ditemukan
+        $noTransactions = $transactions->isEmpty();
+        
+        return view('transactions.index', compact('transactions', 'totalSum', 'noTransactions'));
     }
     
     public function show(Transaction $transaction)
@@ -208,14 +211,24 @@ class TransactionController extends Controller
         
         $transactions = $query->get();
         
+        // Alternative flow: Data tidak ditemukan untuk diekspor
+        if ($transactions->isEmpty()) {
+            return back()->with('error', 'Tidak ada data transaksi untuk diekspor pada periode yang dipilih.');
+        }
+        
         // Generate file based on format
-        switch ($request->format) {
-            case 'csv':
-                return $this->exportCSV($transactions, $startDate, $endDate);
-            case 'pdf':
-                return $this->exportPDF($transactions, $startDate, $endDate);
-            case 'json':
-                return $this->exportJSON($transactions, $startDate, $endDate);
+        try {
+            switch ($request->format) {
+                case 'csv':
+                    return $this->exportCSV($transactions, $startDate, $endDate);
+                case 'pdf':
+                    return $this->exportPDF($transactions, $startDate, $endDate);
+                case 'json':
+                    return $this->exportJSON($transactions, $startDate, $endDate);
+            }
+        } catch (\Exception $e) {
+            // Alternative flow: Gagal mengekspor data
+            return back()->with('error', 'Gagal mengekspor data: ' . $e->getMessage());
         }
     }
     

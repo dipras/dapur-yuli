@@ -21,7 +21,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/transactions/{transaction}', [TransactionController::class, 'show'])->name('transactions.show');
     
     // Financial Report
-    Route::get('/laporan', [TransactionController::class, 'report'])->name('transactions.report');
+    Route::get('/report', [TransactionController::class, 'report'])->name('report.index');
+    Route::get('/report/export', [TransactionController::class, 'exportForm'])->name('report.export');
+    Route::post('/report/export/download', [TransactionController::class, 'exportDownload'])->name('report.export.download');
     
     Route::resource('product', ProductController::class);
     

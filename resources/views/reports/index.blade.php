@@ -14,9 +14,9 @@
                     {{ $startDate->format('d') }} - {{ $endDate->format('d M Y') }}
                 </span>
                 <div class="flex gap-2">
-                    <button onclick="exportData()" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg font-semibold">
+                    <a href="/report/export" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg font-semibold">
                         Ekspor
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
@@ -25,16 +25,16 @@
     <!-- Period Filter -->
     <div class="px-4 -mt-3 mb-4">
         <div class="bg-white rounded-xl shadow p-2 flex gap-2">
-            <a href="/laporan?period=daily" class="flex-1 text-center py-2 rounded-lg font-semibold text-sm {{ $period == 'daily' ? 'bg-primary text-white' : 'text-gray-600 hover:bg-gray-100' }}">
+            <a href="/report?period=daily" class="flex-1 text-center py-2 rounded-lg font-semibold text-sm {{ $period == 'daily' ? 'bg-primary text-white' : 'text-gray-600 hover:bg-gray-100' }}">
                 Hari Ini
             </a>
-            <a href="/laporan?period=weekly" class="flex-1 text-center py-2 rounded-lg font-semibold text-sm {{ $period == 'weekly' ? 'bg-primary text-white' : 'text-gray-600 hover:bg-gray-100' }}">
+            <a href="/report?period=weekly" class="flex-1 text-center py-2 rounded-lg font-semibold text-sm {{ $period == 'weekly' ? 'bg-primary text-white' : 'text-gray-600 hover:bg-gray-100' }}">
                 Minggu
             </a>
-            <a href="/laporan?period=monthly" class="flex-1 text-center py-2 rounded-lg font-semibold text-sm {{ $period == 'monthly' ? 'bg-primary text-white' : 'text-gray-600 hover:bg-gray-100' }}">
+            <a href="/report?period=monthly" class="flex-1 text-center py-2 rounded-lg font-semibold text-sm {{ $period == 'monthly' ? 'bg-primary text-white' : 'text-gray-600 hover:bg-gray-100' }}">
                 Bulan
             </a>
-            <a href="/laporan?period=yearly" class="flex-1 text-center py-2 rounded-lg font-semibold text-sm {{ $period == 'yearly' ? 'bg-primary text-white' : 'text-gray-600 hover:bg-gray-100' }}">
+            <a href="/report?period=yearly" class="flex-1 text-center py-2 rounded-lg font-semibold text-sm {{ $period == 'yearly' ? 'bg-primary text-white' : 'text-gray-600 hover:bg-gray-100' }}">
                 Tahun
             </a>
         </div>

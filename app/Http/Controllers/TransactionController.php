@@ -92,7 +92,7 @@ class TransactionController extends Controller
             ->limit(10)
             ->get();
         
-        return view('transactions.report', compact(
+        return view('reports.index', compact(
             'totalRevenue',
             'totalTransactions',
             'averageTransaction',
@@ -155,4 +155,175 @@ class TransactionController extends Controller
             'data' => $data
         ];
     }
+    
+    public function exportForm()
+    {
+        return view('reports.export');
+    }
+    
+    public function exportDownload(Request $request)
+    {
+        $request->validate([
+            'period' => 'required|in:daily,weekly,monthly,yearly,custom',
+            'format' => 'required|in:csv,pdf,json',
+            'year' => 'nullable|integer|min:2020|max:2100'
+        ]);
+        
+        // Determine date range
+        $period = $request->period;
+        $year = $request->year ?? now()->year;
+        
+        if ($period === 'custom') {
+            $startDate = $request->start_date ? date('Y-m-d', strtotime($request->start_date)) : now()->startOfYear();
+            $endDate = $request->end_date ? date('Y-m-d', strtotime($request->end_date)) : now()->endOfYear();
+        } else {
+            switch ($period) {
+                case 'daily':
+                    $startDate = now()->startOfDay();
+                    $endDate = now()->endOfDay();
+                    break;
+                case 'weekly':
+                    $startDate = now()->startOfWeek();
+                    $endDate = now()->endOfWeek();
+                    break;
+                case 'monthly':
+                    $startDate = now()->startOfMonth();
+                    $endDate = now()->endOfMonth();
+                    break;
+                case 'yearly':
+                    $startDate = now()->setYear($year)->startOfYear();
+                    $endDate = now()->setYear($year)->endOfYear();
+                    break;
+            }
+        }
+        
+        // Get transactions with filters
+        $query = Transaction::with('user')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->orderBy('created_at', 'desc');
+        
+        if ($request->payment_method) {
+            $query->where('payment_method', $request->payment_method);
+        }
+        
+        $transactions = $query->get();
+        
+        // Generate file based on format
+        switch ($request->format) {
+            case 'csv':
+                return $this->exportCSV($transactions, $startDate, $endDate);
+            case 'pdf':
+                return $this->exportPDF($transactions, $startDate, $endDate);
+            case 'json':
+                return $this->exportJSON($transactions, $startDate, $endDate);
+        }
+    }
+    
+    private function exportCSV($transactions, $startDate, $endDate)
+    {
+        $filename = 'laporan-keuangan-' . now()->format('Y-m-d-His') . '.csv';
+        
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+        
+        $callback = function() use ($transactions, $startDate, $endDate) {
+            $file = fopen('php://output', 'w');
+            
+            // UTF-8 BOM for Excel compatibility
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+            
+            // Header
+            fputcsv($file, ['LAPORAN KEUANGAN']);
+            fputcsv($file, ['Periode: ' . date('d/m/Y', strtotime($startDate)) . ' - ' . date('d/m/Y', strtotime($endDate))]);
+            fputcsv($file, ['Total Transaksi: ' . $transactions->count()]);
+            fputcsv($file, ['Total Pendapatan: Rp ' . number_format($transactions->sum('total'), 0, ',', '.')]);
+            fputcsv($file, []);
+            
+            // Column headers
+            fputcsv($file, [
+                'No',
+                'Nomor Transaksi',
+                'Tanggal',
+                'Waktu',
+                'Metode Pembayaran',
+                'Jumlah Item',
+                'Total',
+                'Kasir'
+            ]);
+            
+            // Data rows
+            foreach ($transactions as $index => $transaction) {
+                fputcsv($file, [
+                    $index + 1,
+                    $transaction->transaction_number,
+                    $transaction->created_at->format('d/m/Y'),
+                    $transaction->created_at->format('H:i'),
+                    $transaction->payment_method == 'cash' ? 'Cash' : 'QRIS',
+                    count($transaction->items),
+                    $transaction->total,
+                    $transaction->user ? $transaction->user->name : '-'
+                ]);
+            }
+            
+            fclose($file);
+        };
+        
+        return response()->stream($callback, 200, $headers);
+    }
+    
+    private function exportPDF($transactions, $startDate, $endDate)
+    {
+        // For now, return a simple text response
+        // You can integrate libraries like DomPDF or TCPDF later
+        $content = "LAPORAN KEUANGAN\n\n";
+        $content .= "Periode: " . date('d/m/Y', strtotime($startDate)) . " - " . date('d/m/Y', strtotime($endDate)) . "\n";
+        $content .= "Total Transaksi: " . $transactions->count() . "\n";
+        $content .= "Total Pendapatan: Rp " . number_format($transactions->sum('total'), 0, ',', '.') . "\n\n";
+        
+        foreach ($transactions as $index => $transaction) {
+            $content .= ($index + 1) . ". " . $transaction->transaction_number . "\n";
+            $content .= "   Tanggal: " . $transaction->created_at->format('d/m/Y H:i') . "\n";
+            $content .= "   Pembayaran: " . ($transaction->payment_method == 'cash' ? 'Cash' : 'QRIS') . "\n";
+            $content .= "   Total: Rp " . number_format($transaction->total, 0, ',', '.') . "\n\n";
+        }
+        
+        return response($content)
+            ->header('Content-Type', 'text/plain')
+            ->header('Content-Disposition', 'attachment; filename="laporan-keuangan-' . now()->format('Y-m-d-His') . '.txt"');
+    }
+    
+    private function exportJSON($transactions, $startDate, $endDate)
+    {
+        $data = [
+            'report' => [
+                'period' => [
+                    'start' => date('Y-m-d', strtotime($startDate)),
+                    'end' => date('Y-m-d', strtotime($endDate))
+                ],
+                'summary' => [
+                    'total_transactions' => $transactions->count(),
+                    'total_revenue' => $transactions->sum('total'),
+                    'cash_total' => $transactions->where('payment_method', 'cash')->sum('total'),
+                    'qris_total' => $transactions->where('payment_method', 'qris')->sum('total')
+                ],
+                'transactions' => $transactions->map(function($transaction) {
+                    return [
+                        'transaction_number' => $transaction->transaction_number,
+                        'date' => $transaction->created_at->format('Y-m-d'),
+                        'time' => $transaction->created_at->format('H:i:s'),
+                        'payment_method' => $transaction->payment_method,
+                        'total' => $transaction->total,
+                        'items' => $transaction->items,
+                        'cashier' => $transaction->user ? $transaction->user->name : null
+                    ];
+                })
+            ]
+        ];
+        
+        return response()->json($data)
+            ->header('Content-Disposition', 'attachment; filename="laporan-keuangan-' . now()->format('Y-m-d-His') . '.json"');
+    }
 }
+

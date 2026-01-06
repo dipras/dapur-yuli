@@ -45,20 +45,20 @@
 
         <!-- Menu -->
         <nav class="flex-1 flex flex-col px-6 gap-6 pb-24">
-            <a href="#" class="flex items-center gap-3 text-gray-700 font-bold hover:text-primary">
+            <a href="/" class="flex items-center gap-3 font-bold {{ request()->is('/') ? 'text-primary' : 'text-gray-700 hover:text-primary' }}">
                 📋 <span>Checkout</span>
             </a>
-            <a href="#" class="flex items-center gap-3 text-gray-700 font-bold hover:text-primary">
+            <a href="/transactions" class="flex items-center gap-3 font-bold {{ request()->is('transactions*') ? 'text-primary' : 'text-gray-700 hover:text-primary' }}">
                 🧾 <span>Histori Transaksi</span>
             </a>
-            <a href="/product" class="flex items-center gap-3 text-gray-700 font-bold hover:text-primary">
+            <a href="/product" class="flex items-center gap-3 font-bold {{ request()->is('product*') ? 'text-primary' : 'text-gray-700 hover:text-primary' }}">
                 🍽️ <span>Atur stok makanan</span>
             </a>
-            <a href="#" class="flex items-center gap-3 text-gray-700 font-bold hover:text-primary">
+            <a href="/report" class="flex items-center gap-3 font-bold {{ request()->is('report*') ? 'text-primary' : 'text-gray-700 hover:text-primary' }}">
                 💰 <span>Laporan Keuangan</span>
             </a>
             @if(Auth::user()->role && Auth::user()->role->value === 'admin')
-            <a href="{{ route('users.index') }}" class="flex items-center gap-3 text-gray-700 font-bold hover:text-primary">
+            <a href="{{ route('users.index') }}" class="flex items-center gap-3 font-bold {{ request()->is('users*') ? 'text-primary' : 'text-gray-700 hover:text-primary' }}">
                 👥 <span>Manajemen User</span>
             </a>
             @endif

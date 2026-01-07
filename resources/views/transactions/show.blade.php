@@ -36,36 +36,36 @@
         <div class="bg-white rounded-xl shadow overflow-hidden mb-6">
             <div class="bg-blue-200 grid grid-cols-12 gap-2 px-4 py-3 text-sm font-semibold">
                 <div class="col-span-1">NO</div>
-                <div class="col-span-6">Produk</div>
-                <div class="col-span-2 text-center">Jumlah</div>
+                <div class="col-span-5">Produk</div>
+                <div class="col-span-2 text-center">Harga</div>
+                <div class="col-span-1 text-center">Qty</div>
                 <div class="col-span-3 text-right">Subtotal</div>
             </div>
             
-            @foreach($transaction->items as $index => $item)
+            @foreach($transaction->enriched_items as $index => $item)
             <div class="grid grid-cols-12 gap-2 px-4 py-3 text-sm border-b last:border-b-0">
                 <div class="col-span-1">{{ $index + 1 }}</div>
-                <div class="col-span-6">
-                    @if(isset($item['name']))
-                        {{ $item['name'] }}
-                    @else
-                        Produk #{{ $item['product_id'] }}
+                <div class="col-span-5">
+                    <div class="font-semibold">{{ $item['name'] }}</div>
+                    @if(isset($item['category']))
+                    <div class="text-xs text-gray-500">{{ ucfirst($item['category']) }}</div>
                     @endif
                 </div>
-                <div class="col-span-2 text-center">{{ $item['quantity'] }}</div>
-                <div class="col-span-3 text-right">
-                    @if(isset($item['price']))
-                        Rp {{ number_format($item['price'] * $item['quantity'], 0, ',', '.') }}
-                    @else
-                        -
-                    @endif
+                <div class="col-span-2 text-center text-gray-600">
+                    Rp {{ number_format($item['price'], 0, ',', '.') }}
+                </div>
+                <div class="col-span-1 text-center font-semibold">{{ $item['quantity'] }}</div>
+                <div class="col-span-3 text-right font-semibold">
+                    Rp {{ number_format($item['subtotal'], 0, ',', '.') }}
                 </div>
             </div>
             @endforeach
 
             <!-- Total -->
             <div class="bg-blue-200 grid grid-cols-12 gap-2 px-4 py-3 text-sm font-bold">
-                <div class="col-span-7">Total</div>
-                <div class="col-span-2 text-center">{{ collect($transaction->items)->sum('quantity') }}</div>
+                <div class="col-span-6">Total</div>
+                <div class="col-span-2 text-center">-</div>
+                <div class="col-span-1 text-center">{{ collect($transaction->enriched_items)->sum('quantity') }}</div>
                 <div class="col-span-3 text-right">Rp {{ number_format($transaction->total, 0, ',', '.') }}</div>
             </div>
         </div>

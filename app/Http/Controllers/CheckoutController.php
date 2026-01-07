@@ -106,12 +106,29 @@ class CheckoutController extends Controller
                     $product->save();
                 }
                 
+                // Enrich items with product name and price before saving
+                $enrichedItems = [];
+                foreach ($items as $item) {
+                    $product = Product::find($item['product_id']);
+                    if ($product) {
+                        $quantity = (int) $item['quantity'];
+                        $price = (int) $product->price;
+                        $enrichedItems[] = [
+                            'product_id' => $product->id,
+                            'name' => $product->product_name,
+                            'quantity' => $quantity,
+                            'price' => $price,
+                            'subtotal' => $price * $quantity,
+                        ];
+                    }
+                }
+
                 // Save transaction
                 Transaction::create([
                     'transaction_number' => $transactionNumber,
                     'payment_method' => $paymentMethod,
                     'total' => $total,
-                    'items' => $items,
+                    'items' => $enrichedItems,
                     'user_id' => Auth::id()
                 ]);
                 
@@ -160,11 +177,28 @@ class CheckoutController extends Controller
                     $product->save();
                 }
                 
+                // Enrich items with product name and price before saving
+                $enrichedItems = [];
+                foreach ($items as $item) {
+                    $product = Product::find($item['product_id']);
+                    if ($product) {
+                        $quantity = (int) $item['quantity'];
+                        $price = (int) $product->price;
+                        $enrichedItems[] = [
+                            'product_id' => $product->id,
+                            'name' => $product->product_name,
+                            'quantity' => $quantity,
+                            'price' => $price,
+                            'subtotal' => $price * $quantity,
+                        ];
+                    }
+                }
+
                 Transaction::create([
                     'transaction_number' => $transactionNumber,
                     'payment_method' => $paymentMethod,
                     'total' => $total,
-                    'items' => $items,
+                    'items' => $enrichedItems,
                     'user_id' => Auth::id()
                 ]);
                 

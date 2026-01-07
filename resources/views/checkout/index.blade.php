@@ -58,7 +58,7 @@
         <div class="bg-white rounded-xl shadow flex items-center p-3">
             <img src="{{ $product->image }}" class="w-16 h-16 rounded-lg object-cover">
             <div class="ml-3 flex-1">
-                <h3 class="font-semibold">{{ $product->name }}</h3>
+                <h3 class="font-semibold">{{ $product->product_name }}</h3>
                 <p class="text-xs text-gray-500">Stok tak terbatas</p>
                 <p class="font-bold text-sm mt-1">Rp. {{ $product->price }}</p>
             </div>

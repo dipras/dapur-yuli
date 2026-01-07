@@ -24,13 +24,27 @@
         </div>
 
         <!-- QR Code -->
-        <div class="bg-white rounded-xl shadow p-8 mb-6 flex justify-center">
-            <div class="w-64 h-64 bg-gray-200 rounded-lg flex items-center justify-center">
-                <!-- QR Code Placeholder - In production, generate actual QR code -->
-                <div class="grid grid-cols-8 gap-1 p-4">
-                    @for($i = 0; $i < 64; $i++)
-                        <div class="w-3 h-3 {{ rand(0, 1) ? 'bg-black' : 'bg-white' }} rounded-sm"></div>
-                    @endfor
+        <div class="bg-white rounded-xl shadow p-6 mb-6">
+            <div class="flex justify-center mb-4">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/QR_code_for_mobile_English_Wikipedia.svg/800px-QR_code_for_mobile_English_Wikipedia.svg.png" alt="QRIS Code" class="w-64 h-64 object-contain">
+            </div>
+            
+            <!-- QRIS Logo -->
+            <div class="flex justify-center mb-2">
+                <div class="bg-red-600 text-white px-6 py-1 rounded-lg font-bold text-lg tracking-wider">
+                    QRIS
+                </div>
+            </div>
+            
+            <!-- Supported Payment Methods -->
+            <div class="text-center text-xs text-gray-600">
+                <p class="mb-2">Didukung oleh:</p>
+                <div class="flex flex-wrap justify-center gap-2">
+                    <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-semibold">GoPay</span>
+                    <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full font-semibold">OVO</span>
+                    <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-semibold">DANA</span>
+                    <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full font-semibold">LinkAja</span>
+                    <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full font-semibold">ShopeePay</span>
                 </div>
             </div>
         </div>

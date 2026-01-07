@@ -67,31 +67,31 @@
         </div>
 
         <!-- Payment Buttons -->
-        <div class="space-y-3">
-            <form method="POST" action="/checkout/payment">
-                @csrf
-                @foreach($items as $item)
-                <input type="hidden" name="items[{{ $loop->index }}][product_id]" value="{{ $item['product_id'] }}">
-                <input type="hidden" name="items[{{ $loop->index }}][quantity]" value="{{ $item['quantity'] }}">
-                @endforeach
-                <input type="hidden" name="total" value="{{ $totalPrice }}">
-                <input type="hidden" name="transaction_number" value="{{ $transactionNumber }}">
-                
-                <button type="submit" name="payment_method" value="cash" class="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-xl shadow font-semibold flex items-center justify-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <form method="POST" action="/checkout/payment">
+            @csrf
+            @foreach($items as $item)
+            <input type="hidden" name="items[{{ $loop->index }}][product_id]" value="{{ $item['product_id'] }}">
+            <input type="hidden" name="items[{{ $loop->index }}][quantity]" value="{{ $item['quantity'] }}">
+            @endforeach
+            <input type="hidden" name="total" value="{{ $totalPrice }}">
+            <input type="hidden" name="transaction_number" value="{{ $transactionNumber }}">
+            
+            <div class="grid grid-cols-2 gap-3">
+                <button type="submit" name="payment_method" value="cash" class="bg-green-500 hover:bg-green-600 text-white py-4 rounded-xl shadow font-semibold flex flex-col items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                     <span>Bayar Cash</span>
                 </button>
                 
-                <button type="submit" name="payment_method" value="qris" class="w-full bg-purple-500 hover:bg-purple-600 text-white py-4 rounded-xl shadow font-semibold flex items-center justify-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <button type="submit" name="payment_method" value="qris" class="bg-purple-500 hover:bg-purple-600 text-white py-4 rounded-xl shadow font-semibold flex flex-col items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
                     </svg>
                     <span>Bayar QRIS</span>
                 </button>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
 </div>
 @endsection
